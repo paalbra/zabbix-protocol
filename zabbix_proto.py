@@ -9,7 +9,7 @@ import zlib
 # https://www.zabbix.com/documentation/current/manual/appendix/protocols/header_datalen
 
 
-def recvall(sock, timeout=1.0, bufsize=4096):
+def recvall(sock, timeout, bufsize=4096):
     sock.settimeout(timeout)
     merged_data = bytearray()
     while True:
@@ -33,7 +33,7 @@ def recvall(sock, timeout=1.0, bufsize=4096):
         return content.decode("utf-8")
 
 
-def send_data(host, port, data):
+def send_data(host, port, data, recv_timeout=1.0):
     data = json.dumps(data).encode("utf-8")
     packet = bytearray()
     packet.extend(b"ZBXD")
@@ -45,12 +45,13 @@ def send_data(host, port, data):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
         s.sendall(packet)
-        response = recvall(s)
+        response = recvall(s, recv_timeout)
         sys.stdout.write(response)
 
 
 if __name__ == "__main__":
     hostname = sys.argv[1]
     port = int(sys.argv[2])
+    timeout = int(sys.argv[3])
     data = json.loads(sys.stdin.read())
-    send_data(hostname, port, data)
+    send_data(hostname, port, data, timeout)

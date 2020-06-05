@@ -10,7 +10,7 @@ Simple python3 module that sends data with the Zabbix protocol headers.
 ## Example
 
 ```
-$ echo '{"request": "active checks", "host": "server.example.com"}' | python3 zabbix_proto.py zabbix.example.com 10051 | jq
+$ echo '{"request": "active checks", "host": "server.example.com"}' | python3 zabbix_proto.py zabbix.example.com 10051 10 | jq
 {
   "response": "success",
   "data": [
