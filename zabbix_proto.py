@@ -70,13 +70,20 @@ def recvall(sock, timeout, bufsize=4096):
     return content
 
 
-def send_data(host, port, data, recv_timeout=1.0):
+def send_data(host, port, data, compress=True, recv_timeout=1.0):
     data = json.dumps(data).encode("utf-8")
     packet = bytearray()
     packet.extend(b"ZBXD")
-    packet.extend(b"\1")
-    packet.extend(struct.pack('<L', len(data)))
-    packet.extend(b"\0\0\0\0")
+    if compress:
+        packet.extend(b"\3")
+        uncompressed_data_length = len(data)
+        data = zlib.compress(data)
+        packet.extend(struct.pack('<L', len(data)))
+        packet.extend(struct.pack('<L', uncompressed_data_length))
+    else:
+        packet.extend(b"\1")
+        packet.extend(struct.pack('<L', len(data)))
+        packet.extend(b"\0\0\0\0")
     packet.extend(data)
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -91,5 +98,5 @@ if __name__ == "__main__":
     port = int(sys.argv[2])
     timeout = int(sys.argv[3])
     data = json.loads(sys.stdin.read())
-    response = send_data(hostname, port, data, timeout)
+    response = send_data(hostname, port, data, recv_timeout=timeout)
     print(json.dumps(response))
