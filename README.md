@@ -5,7 +5,7 @@
 Simple python3 module that sends data with the Zabbix protocol headers.
 
 * https://zabbix.com
-* https://www.zabbix.com/documentation/current/manual/appendix/protocols/header\_datalen
+* https://www.zabbix.com/documentation/current/manual/appendix/protocols/header_datalen
 
 ## Example
 
