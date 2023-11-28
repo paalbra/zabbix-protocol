@@ -57,13 +57,8 @@ def parse_data(data):
 def recvall(sock, timeout, bufsize=4096):
     sock.settimeout(timeout)
     merged_data = bytearray()
-    while True:
-        data = sock.recv(bufsize)
-        if data:
-            merged_data.extend(data)
-        else:
-            # No more data
-            break
+    while data := sock.recv(bufsize):
+        merged_data.extend(data)
 
     _, content = parse_data(merged_data)
 
